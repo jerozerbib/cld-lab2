@@ -1,1 +1,7 @@
-# cld-lab2
+## LAB 02: APP SCALING ON AMAZON WEB SERVICES
+
+## Auteurs : Jeremy Zerbib, Samuel Mettler
+
+## Date : March 19, 2020
+
+### TASK 1: CREATE A DATABASE USING THE RELATIONAL DATABASE SERVICE (RDS)
