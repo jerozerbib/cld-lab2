@@ -158,14 +158,14 @@
 
 2. Stop the web server by typing:
 
-   ```
+   ```bash
    sudo systemctl stop apache2
    ```
    
    3. To change Drupal's configuration parameters to point to the RDS database you will need to change the current configuration. At the end of the file **settings.php** found in the drupal folder (`/var/www/html/drupal/sites/default/`), you will find the current lines :
 
 
-   ```
+   ```mysql
          $databases['default']['default'] = array (
         'database' => '<database_name>',
            'username' => '<username>',
@@ -178,9 +178,9 @@
          );
    ```
 
-      Change it to :
+Change it to :
 
-   ```
+   ```mysql
          $databases['default']['default'] = array (
      'database' => '<rds_db_name>',
            'username' => '<rds_master_username>',
@@ -193,58 +193,53 @@
    );
    ```
 
-      4. To make the authentication in the RDS database less strict connect to the database, create an additional user `''@'%'` and give this user access rights to the `` database.
-       
-         Perform the following steps:
-      
-         - Launch the `mysql` command to connect to the RDS database (it's the same command as the verification step after creating the RDS database):
-       
-         ```
-   mysql --host=endpoint_address --user=<rds_master_username> --password=<rds_master_password>
-         ```
+4. To make the authentication in the RDS database less strict connect to the database, create an additional user `''@'%'` and give this user access rights to the `` database.
+     Perform the following steps:
+     - Launch the `mysql` command to connect to the RDS database (it's the same command as the verification step after creating the RDS database):
 
-         You should see a welcome message and the MySQL command line prompt `mysql>`.
-       
-      5. On the `mysql>` command prompt run the following three commands where `` is the database password for user `` you wrote down earlier:
-    
-         ```
-   CREATE USER '<rds_username>'@'%' IDENTIFIED BY '<rds_password>';
-         GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES ON <rds_db_name>.* TO '<rds_username>'@'%' IDENTIFIED BY '<rds_password>';
-   FLUSH PRIVILEGES;
-         ```
+   ```bash
+mysql --host=endpoint_address --user=<rds_master_username> --password=<rds_master_password>
+   ```
 
-      6. Disconnect from the RDS database by typing `quit` and verify that user `` can connect to the database by typing
-       
-         ```
-         mysql --host=endpoint_address --user=<rds_username> --password=<rds_password>
-      ```
+You should see a welcome message and the MySQL command line prompt `mysql>`.
 
+  5. On the `mysql>` command prompt run the following three commands where `<rds_password>` is the database password for user `<rds_username>` you wrote down earlier:
+
+```mysql
+CREATE USER '<rds_username>'@'%' IDENTIFIED BY '<rds_password>';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES ON <rds_db_name>.* TO '<rds_username>'@'%' IDENTIFIED BY '<rds_password>';
+FLUSH PRIVILEGES;
+   
+```
+
+  6. Disconnect from the RDS database by typing `quit` and verify that user `` can connect to the database by typing
+   
+     ```bash
+     mysql --host=endpoint_address --user=<rds_username> --password=<rds_password>
+     ```
+     
+     
 #### Migrate the database content to RDS
 
 To migrate the data currently stored in the MySQL database of the Drupal master instance into the RDS database, perform the following steps.
-      
    1. Log into the Drupal master instance.
       
    2. Type the following command to migrate the database content from the local MySQL database to the RDS database.
       
+   ```bash
+mysqldump --add-drop-table --user=<localhost_db_username> --password=<localhost_db_password> <localhost_database_name> | mysql --host=endpoint_address --user=<rds_username> --password=<rds_password> <rds_db_name>
    ```
-         mysqldump --add-drop-table --user=<localhost_db_username> --password=<localhost_db_password> <localhost_database_name> |
-     mysql --host=endpoint_address --user=<rds_username> --password=<rds_password> <rds_db_name>
-   ```
 
-         The command should complete without errors.
-       
-      3. Start the web server by typing:
-      
-         ```
-         sudo systemctl start apache2
-         ```
-      
-      4. Verify the database configuration by navigating with your browser to the Drupal home page at `http://hostname//`.
-      
-      #### DELIVERABLE 2
-      
-      - **Copy the part of settings.php that configures the database into the report.**
+The command should complete without errors.
 
+  3. Start the web server by typing:
+  
+     ```bash
+     sudo systemctl start apache2
+     ```
+  
+  4. Verify the database configuration by navigating with your browser to the Drupal home page at `http://hostname/<database_name>/`.
 
-​      
+  #### DELIVERABLE 2
+
+  - **Copy the part of settings.php that configures the database into the report.**
