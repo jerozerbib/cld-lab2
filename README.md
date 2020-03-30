@@ -1,8 +1,8 @@
 ## LAB 02: APP SCALING ON AMAZON WEB SERVICES
 
-## Auteurs : Jeremy Zerbib, Samuel Mettler
+## Authors : Jeremy Zerbib, Samuel Mettler
 
-## Date : March 19, 2020
+## Date : March 31, 2020
 
 ### TASK 1: CREATE A DATABASE USING THE RELATIONAL DATABASE SERVICE (RDS)
 
@@ -138,13 +138,21 @@ The estimated monthly costs are up to 14.71$.
 
 - **In a two-tier architecture the web application and the database are kept separate and run on different hosts. Imagine that for the second tier instead of using RDS to store the data you would create a virtual machine in EC2 and install and run yourself a database on it. If you were the Head of IT of a medium-size business, how would you argue in favor of using a database as a service instead of running your own database on an EC2 instance? How would you argue against it?**
 
-Running a *RDS instance* as a service instead of running our own database could be the best idea for the company as we need availability for our clients. If one instance is down, it does not mean that the other is also down. 
+Running a *RDS instance* as a service instead of running our own database could be the best idea for the company as we need availability for our clients. If one instance is down, it does not mean that the other is also down. Also, using an RDS architecture is faster to execute queries on a DB, scales well, handles concurrency and larger datasets.  It is also easier to create relations between two tables.
 
 On the other hand, on a cost basis, it would be wiser to run our own database on an EC2 instance. It is way cheaper to run an EC2 instance as stated above.
 
 - **Copy the endpoint address of the database into the report.**
   
   The endpoint name is : **zerbib-drupal.chkfvjvvdjw1.us-east-1.rds.amazonaws.com**
+
+#### Additional information
+
+Credentials are not well formed as we took this lab as an exercise. They need to be more secured than those ones.
+
+| Username | Password     |
+| -------- | ------------ |
+| admin    | lab2-cld2020 |
 
 ### TASK 2: CONFIGURE THE DRUPAL MASTER INSTANCE TO USE THE RDS DATABASE
 
@@ -259,6 +267,14 @@ $databases['default']['default'] = array (
   'driver' => 'mysql',
 );
 ```
+
+#### Additional information
+
+As stated above, we did not well formed our credentials for this part. It needs to be more secured.
+
+| Username | Password |
+| -------- | -------- |
+| test     | test     |
 
 ### TASK 3: CREATE A CUSTOM VIRTUAL MACHINE IMAGE
 
@@ -474,3 +490,5 @@ Note: In this task it is not important that you reproduce exactly an expected be
 ![](./assets/Task6_6.png)
 
 We can see that this time, the load-balancer is almost drowning in its own load. It looks like the load-balancer is not available and therefore it times out. It is due to the fact that it is overloaded with requests and it cannot accept anymore of them.
+
+As far as the testing goes, we cannot say that we have tested the load balancing mechanism as  we did not define the rules of the balancing explicitly. We can guess that the default *Round-robin* worked but we cannot be sure as we do not have the same distribution on the network monitor above.
